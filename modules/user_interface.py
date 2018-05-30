@@ -286,31 +286,57 @@ def get_vm_access_details(vm):
         ip_Public = None
         ip_Forwarder = None
         services = []
+        internals = []  
         # Get private IPs
-        if 'autoIpConfig' in nic['ipConfig']:
-            internal = nic['ipConfig']['autoIpConfig']['allocatedIp']
-        elif 'staticIpConfig' in nic['ipConfig']:
-            internal = nic['ipConfig']['staticIpConfig']['ip']
-        n['internalIP'] = internal
+        if nic.get('ipConfig'):
+            if 'autoIpConfig' in nic['ipConfig']:
+                internal = nic['ipConfig']['autoIpConfig']['allocatedIp']
+            elif 'staticIpConfig' in nic['ipConfig']:
+                internal = nic['ipConfig']['staticIpConfig']['ip']
+            # Get FQDN
+            if 'fqdn' in nic['ipConfig']:
+                fqdn = nic['ipConfig']['fqdn']                
+            n['fqdn'] = fqdn  
+            # Get public IP
+            if nic['ipConfig']['hasPublicIp']:
+                try:
+                    ip_Elastic = nic['ipConfig']['elasticIpAddress']
+                except:
+                    try:
+                        ip_Public = nic['ipConfig']['publicIp']
+                    except:
+                        pass
+            elif 'publicIp' in nic['ipConfig']:
+                ip_Forwarder = nic['ipConfig']['publicIp']
+        #Handles vlan interfaces
+        elif nic.get('vlanInterfaces'):
+            for vlan in nic['vlanInterfaces']:
+                if vlan.get('ipConfigurations'):
+                    for ipConfig in vlan['ipConfigurations']:
+                        # Get FQDN
+                        if 'fqdn' in ipConfig:
+                            fqdn = ipConfig['fqdn']                
+                        n['fqdn'] = fqdn 
+                        # Get public IP
+                        if ipConfig['hasPublicIp']:
+                            try:
+                                ip_Elastic = ipConfig['elasticIpAddress']
+                            except:
+                                try:
+                                    ip_Public = ipConfig['publicIp']
+                                except:
+                                    pass
+                        elif 'publicIp' in ipConfig:
+                            ip_Forwarder = ipConfig['publicIp']
+                        #Get private IPs
+                        if ipConfig.get('staticIpConfig'):
+                            internals.append(str(ipConfig['staticIpConfig']['ip'].encode('ascii','ignore'))) 
+            internal = ' '.join(map(str, internals))    
         # Get extra private IPs
         for addtlIp in nic.get('additionalIpConfig', []):
             ip_Additional.append(addtlIp['staticIpConfig']['ip'])
-        n['internalIPs'] = ip_Additional
-        # Get FQDN
-        if 'fqdn' in nic['ipConfig']:
-            fqdn = nic['ipConfig']['fqdn']
-        n['fqdn'] = fqdn
-        # Get public IP
-        if nic['ipConfig']['hasPublicIp']:
-            try:
-                ip_Elastic = nic['ipConfig']['elasticIpAddress']
-            except:
-                try:
-                    ip_Public = nic['ipConfig']['publicIp']
-                except:
-                    pass
-        elif 'publicIp' in nic['ipConfig']:
-            ip_Forwarder = nic['ipConfig']['publicIp']
+        n['internalIPs'] = ip_Additional            
+
         # Check for services
         for svc in vm.get('suppliedServices', []):
             if svc['external'] and 'externalPort' in svc and svc['useLuidForIpConfig'] and nic['ipConfig']['id'] == svc['ipConfigLuid'] and not svc['name'].startswith('dummy'):
