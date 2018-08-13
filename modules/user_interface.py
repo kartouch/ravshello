@@ -1507,8 +1507,20 @@ class Bp(ConfigNode):
             # Is BMC blueprint
             pubLocations = [r for r in pubLocations
                             if r['regionName'] in cfg.bmcRegionNames]
+        elif bpDescription and any(tag in bpDescription for tag in cfg.amazonBlueprintTag):
+            # Is amazon blueprint
+            pubLocations = [r for r in pubLocations
+                            if r['regionName'] in cfg.amazonRegionNames]   
+        elif bpDescription and any(tag in bpDescription for tag in cfg.googleBlueprintTag):
+            # Is google blueprint
+            pubLocations = [r for r in pubLocations
+                            if r['regionName'] in cfg.googleRegionNames]         
+        elif bpDescription and any(tag in bpDescription for tag in cfg.oracleBlueprintTag):
+            # Is oracle blueprint
+            pubLocations = [r for r in pubLocations
+                            if r['regionName'] in cfg.oracleRegionNames]                   
         else:
-            # Is not BMC blueprint
+            # Is not region tagged
             pubLocations = [r for r in pubLocations
                             if not r['regionName'] in cfg.bmcRegionNames]
         ui.print_obj(pubLocations,
@@ -1887,6 +1899,18 @@ class Applications(ConfigNode):
                         # Is BMC blueprint
                         pubLocations = [r for r in pubLocations
                                         if r['regionName'] in cfg.bmcRegionNames]
+                    elif bpDescription and any(tag in bpDescription for tag in cfg.amazonBlueprintTag):
+                        # Is amazon blueprint
+                        pubLocations = [r for r in pubLocations
+                                        if r['regionName'] in cfg.amazonRegionNames]   
+                    elif bpDescription and any(tag in bpDescription for tag in cfg.googleBlueprintTag):
+                        # Is google blueprint
+                        pubLocations = [r for r in pubLocations
+                                        if r['regionName'] in cfg.googleRegionNames]         
+                    elif bpDescription and any(tag in bpDescription for tag in cfg.oracleBlueprintTag):
+                        # Is oracle blueprint
+                        pubLocations = [r for r in pubLocations
+                                        if r['regionName'] in cfg.oracleRegionNames]         
                     else:
                         # Is not BMC blueprint
                         pubLocations = [r for r in pubLocations
@@ -2117,8 +2141,12 @@ class App(ConfigNode):
             app = rClient.get_application(self.appId, aspect='deployment')
             if app['published']:
                 if desiredState == 'STARTED':
-                    groupsNoAutostart = [g['id'] for g in app['deployment']['vmOrderGroups'] if g.get('skipStartupSequence', False)]
-                    vmStates = list(set([vm['state'] for vm in app['deployment']['vms'] if vm['vmOrderGroupId'] not in groupsNoAutostart]))
+                    vmStates = None
+                    if app['deployment'].get('vmOrderGroups'):
+                        groupsNoAutostart = [g['id'] for g in app['deployment']['vmOrderGroups'] if g.get('skipStartupSequence', False)]
+                        vmStates = list(set([vm['state'] for vm in app['deployment']['vms'] if vm['vmOrderGroupId'] not in groupsNoAutostart]))
+                    else:
+                       vmStates = list(set([vm['state'] for vm in app['deployment']['vms']]))
                     if len(vmStates) == 1 and 'STARTED' in vmStates:
                         break
                 elif desiredState == 'STOPPED':
@@ -2519,6 +2547,18 @@ class App(ConfigNode):
             # Is BMC blueprint
             pubLocations = [r for r in pubLocations
                             if r['regionName'] in cfg.bmcRegionNames]
+        elif bpDescription and any(tag in bpDescription for tag in cfg.amazonBlueprintTag):
+            # Is amazon blueprint
+            pubLocations = [r for r in pubLocations
+                            if r['regionName'] in cfg.amazonRegionNames]   
+        elif bpDescription and any(tag in bpDescription for tag in cfg.googleBlueprintTag):
+            # Is google blueprint
+            pubLocations = [r for r in pubLocations
+                            if r['regionName'] in cfg.googleRegionNames]         
+        elif bpDescription and any(tag in bpDescription for tag in cfg.oracleBlueprintTag):
+            # Is oracle blueprint
+            pubLocations = [r for r in pubLocations
+                            if r['regionName'] in cfg.oracleRegionNames]         
         else:
             # Is not BMC blueprint
             pubLocations = [r for r in pubLocations
@@ -2665,6 +2705,18 @@ class App(ConfigNode):
             # Is BMC blueprint
             pubLocations = [r for r in pubLocations
                             if r['regionName'] in cfg.bmcRegionNames]
+        elif bpDescription and any(tag in bpDescription for tag in cfg.amazonBlueprintTag):
+            # Is amazon blueprint
+            pubLocations = [r for r in pubLocations
+                            if r['regionName'] in cfg.amazonRegionNames]   
+        elif bpDescription and any(tag in bpDescription for tag in cfg.googleBlueprintTag):
+            # Is google blueprint
+            pubLocations = [r for r in pubLocations
+                            if r['regionName'] in cfg.googleRegionNames]         
+        elif bpDescription and any(tag in bpDescription for tag in cfg.oracleBlueprintTag):
+            # Is oracle blueprint
+            pubLocations = [r for r in pubLocations
+                            if r['regionName'] in cfg.oracleRegionNames]         
         else:
             # Is not BMC blueprint
             pubLocations = [r for r in pubLocations
@@ -2732,6 +2784,18 @@ class App(ConfigNode):
                 # Is BMC blueprint
                 pubLocations = [r for r in pubLocations
                                 if r['regionName'] in cfg.bmcRegionNames]
+            elif bpDescription and any(tag in bpDescription for tag in cfg.amazonBlueprintTag):
+                # Is amazon blueprint
+                pubLocations = [r for r in pubLocations
+                                if r['regionName'] in cfg.amazonRegionNames]   
+            elif bpDescription and any(tag in bpDescription for tag in cfg.googleBlueprintTag):
+                # Is google blueprint
+                pubLocations = [r for r in pubLocations
+                                if r['regionName'] in cfg.googleRegionNames]         
+            elif bpDescription and any(tag in bpDescription for tag in cfg.oracleBlueprintTag):
+                # Is oracle blueprint
+                pubLocations = [r for r in pubLocations
+                                if r['regionName'] in cfg.oracleRegionNames]         
             else:
                 # Is not BMC blueprint
                 pubLocations = [r for r in pubLocations
