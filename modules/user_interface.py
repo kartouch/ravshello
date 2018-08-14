@@ -286,9 +286,11 @@ def get_vm_access_details(vm):
         ip_Public = None
         ip_Forwarder = None
         services = []
-        internals = []  
+        internals = []
+        n_id = None  
         # Get private IPs
         if nic.get('ipConfig'):
+            n_id = nic['ipConfig']['id']
             if 'autoIpConfig' in nic['ipConfig']:
                 internal = nic['ipConfig']['autoIpConfig']['allocatedIp']
             elif 'staticIpConfig' in nic['ipConfig']:
@@ -313,6 +315,7 @@ def get_vm_access_details(vm):
             for vlan in nic['vlanInterfaces']:
                 if vlan.get('ipConfigurations'):
                     for ipConfig in vlan['ipConfigurations']:
+                        n_id = ipConfig['id']
                         # Get FQDN
                         if 'fqdn' in ipConfig:
                             fqdn = ipConfig['fqdn']                
@@ -339,7 +342,7 @@ def get_vm_access_details(vm):
 
         # Check for services
         for svc in vm.get('suppliedServices', []):
-            if svc['external'] and 'externalPort' in svc and svc['useLuidForIpConfig'] and nic['ipConfig']['id'] == svc['ipConfigLuid'] and not svc['name'].startswith('dummy'):
+            if svc['external'] and 'externalPort' in svc and svc['useLuidForIpConfig'] and n_id == svc['ipConfigLuid'] and not svc['name'].startswith('dummy'):
                 services.append(svc)
                 if svc['name'] == 'ssh' and not vm['ssh']['fqdn']:
                     vm['ssh']['fqdn'] = deets['ssh_fqdn'] = fqdn
