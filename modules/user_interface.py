@@ -1506,22 +1506,20 @@ class Bp(ConfigNode):
         # BMC blueprint?
         bpDescription = rCache.get_bp(self.bpId).get('description')
         # Remove bmc regions or remove everything BUT bmc regions
+
+        taggedLocations = []
         if bpDescription and any(tag in bpDescription for tag in cfg.bmcBlueprintTag):
             # Is BMC blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.bmcRegionNames]
-        elif bpDescription and any(tag in bpDescription for tag in cfg.amazonBlueprintTag):
-            # Is amazon blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.amazonRegionNames]   
-        elif bpDescription and any(tag in bpDescription for tag in cfg.googleBlueprintTag):
-            # Is google blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.googleRegionNames]         
-        elif bpDescription and any(tag in bpDescription for tag in cfg.oracleBlueprintTag):
-            # Is oracle blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.oracleRegionNames]                   
+            taggedLocations = [r for r in pubLocations if r['regionName'] in cfg.bmcRegionNames]
+        else:
+            for tag, regionList in cfg.regionCatalog.iteritems():
+                if bpDescription and tag in bpDescription:
+                    locs = [r for r in pubLocations if r['regionName'] in regionList]
+                    for l in locs:
+                        taggedLocations.append(l)
+          
+        if taggedLocations:
+            pubLocations = taggedLocations
         else:
             # Is not region tagged
             pubLocations = [r for r in pubLocations
@@ -1898,22 +1896,19 @@ class Applications(ConfigNode):
                     # BMC blueprint?
                     bpDescription = rCache.get_bp(bpId).get('description')
                     # Remove bmc regions or remove everything BUT bmc regions
+                    taggedLocations = []
                     if bpDescription and any(tag in bpDescription for tag in cfg.bmcBlueprintTag):
                         # Is BMC blueprint
-                        pubLocations = [r for r in pubLocations
-                                        if r['regionName'] in cfg.bmcRegionNames]
-                    elif bpDescription and any(tag in bpDescription for tag in cfg.amazonBlueprintTag):
-                        # Is amazon blueprint
-                        pubLocations = [r for r in pubLocations
-                                        if r['regionName'] in cfg.amazonRegionNames]   
-                    elif bpDescription and any(tag in bpDescription for tag in cfg.googleBlueprintTag):
-                        # Is google blueprint
-                        pubLocations = [r for r in pubLocations
-                                        if r['regionName'] in cfg.googleRegionNames]         
-                    elif bpDescription and any(tag in bpDescription for tag in cfg.oracleBlueprintTag):
-                        # Is oracle blueprint
-                        pubLocations = [r for r in pubLocations
-                                        if r['regionName'] in cfg.oracleRegionNames]         
+                        taggedLocations = [r for r in pubLocations if r['regionName'] in cfg.bmcRegionNames]
+                    else:
+                        for tag, regionList in cfg.regionCatalog.iteritems():
+                            if bpDescription and tag in bpDescription:                           
+                                locs = [r for r in pubLocations if r['regionName'] in regionList]
+                                for l in locs:
+                                    taggedLocations.append(l)
+                    
+                    if taggedLocations:
+                        pubLocations = taggedLocations     
                     else:
                         # Is not BMC blueprint
                         pubLocations = [r for r in pubLocations
@@ -2546,22 +2541,20 @@ class App(ConfigNode):
         bpId = rCache.get_app(self.appId)['baseBlueprintId']
         bpDescription = rCache.get_bp(bpId).get('description')
         # Remove bmc regions or remove everything BUT bmc regions
+        taggedLocations = []
         if bpDescription and any(tag in bpDescription for tag in cfg.bmcBlueprintTag):
             # Is BMC blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.bmcRegionNames]
-        elif bpDescription and any(tag in bpDescription for tag in cfg.amazonBlueprintTag):
-            # Is amazon blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.amazonRegionNames]   
-        elif bpDescription and any(tag in bpDescription for tag in cfg.googleBlueprintTag):
-            # Is google blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.googleRegionNames]         
-        elif bpDescription and any(tag in bpDescription for tag in cfg.oracleBlueprintTag):
-            # Is oracle blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.oracleRegionNames]         
+            taggedLocations = [r for r in pubLocations if r['regionName'] in cfg.bmcRegionNames]
+        else:
+            for tag, regionList in cfg.regionCatalog.iteritems():
+                if bpDescription and tag in bpDescription:                 
+                    locs = [r for r in pubLocations if r['regionName'] in regionList]
+                    for l in locs:
+                        taggedLocations.append(l)
+        
+
+        if taggedLocations:
+            pubLocations = taggedLocations        
         else:
             # Is not BMC blueprint
             pubLocations = [r for r in pubLocations
@@ -2704,22 +2697,19 @@ class App(ConfigNode):
         bpId = rCache.get_app(self.appId)['baseBlueprintId']
         bpDescription = rCache.get_bp(bpId).get('description')
         # Remove bmc regions or remove everything BUT bmc regions
+        taggedLocations = []
         if bpDescription and any(tag in bpDescription for tag in cfg.bmcBlueprintTag):
             # Is BMC blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.bmcRegionNames]
-        elif bpDescription and any(tag in bpDescription for tag in cfg.amazonBlueprintTag):
-            # Is amazon blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.amazonRegionNames]   
-        elif bpDescription and any(tag in bpDescription for tag in cfg.googleBlueprintTag):
-            # Is google blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.googleRegionNames]         
-        elif bpDescription and any(tag in bpDescription for tag in cfg.oracleBlueprintTag):
-            # Is oracle blueprint
-            pubLocations = [r for r in pubLocations
-                            if r['regionName'] in cfg.oracleRegionNames]         
+            taggedLocations = [r for r in pubLocations if r['regionName'] in cfg.bmcRegionNames]
+        else:
+            for tag, regionList in cfg.regionCatalog.iteritems():
+                if bpDescription and tag in bpDescription:               
+                    locs = [r for r in pubLocations if r['regionName'] in regionList]
+                    for l in locs:
+                        taggedLocations.append(l)
+    
+        if taggedLocations:
+            pubLocations = taggedLocations         
         else:
             # Is not BMC blueprint
             pubLocations = [r for r in pubLocations
@@ -2783,22 +2773,20 @@ class App(ConfigNode):
             bpId = rCache.get_app(self.appId)['baseBlueprintId']
             bpDescription = rCache.get_bp(bpId).get('description')
             # Remove bmc regions or remove everything BUT bmc regions
+            taggedLocations = []
             if bpDescription and any(tag in bpDescription for tag in cfg.bmcBlueprintTag):
                 # Is BMC blueprint
-                pubLocations = [r for r in pubLocations
-                                if r['regionName'] in cfg.bmcRegionNames]
-            elif bpDescription and any(tag in bpDescription for tag in cfg.amazonBlueprintTag):
-                # Is amazon blueprint
-                pubLocations = [r for r in pubLocations
-                                if r['regionName'] in cfg.amazonRegionNames]   
-            elif bpDescription and any(tag in bpDescription for tag in cfg.googleBlueprintTag):
-                # Is google blueprint
-                pubLocations = [r for r in pubLocations
-                                if r['regionName'] in cfg.googleRegionNames]         
-            elif bpDescription and any(tag in bpDescription for tag in cfg.oracleBlueprintTag):
-                # Is oracle blueprint
-                pubLocations = [r for r in pubLocations
-                                if r['regionName'] in cfg.oracleRegionNames]         
+                taggedLocations = [r for r in pubLocations if r['regionName'] in cfg.bmcRegionNames]
+            else:
+                for tag, regionList in cfg.regionCatalog.iteritems():
+                    if bpDescription and tag in bpDescription:
+                        locs = [r for r in pubLocations if r['regionName'] in regionList]
+                        for l in locs:
+                            taggedLocations.append(l)
+            
+
+            if taggedLocations:
+                pubLocations = taggedLocations       
             else:
                 # Is not BMC blueprint
                 pubLocations = [r for r in pubLocations
