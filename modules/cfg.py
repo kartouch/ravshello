@@ -37,7 +37,7 @@ bmcBlueprintTag = [
 ]
 
 # List of BMC (bare-metal-cloud) regionNames
-bmcRegionNames = ['us-east-5', 'us-southwest-1', 'eu-central-3']
+bmcRegionNames = ['us-east-5', 'us-southwest-1', 'eu-central-3', 'eu-west-5']
 
 amazonBlueprintTag = ['#amazon']
 amazonRegionNames = [
@@ -54,7 +54,7 @@ googleRegionNames = [
 ]
 
 oracleBlueprintTag = ['#oracle']
-oracleRegionNames = ['us-east-5', 'us-southwest-1', 'eu-central-3']
+oracleRegionNames = ['us-east-5', 'us-southwest-1', 'eu-central-3', 'eu-west-5']
 
 regionCatalog = {
     "#is_bmc_blueprint": bmcRegionNames,
