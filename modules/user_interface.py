@@ -292,7 +292,10 @@ def get_vm_access_details(vm):
         if nic.get('ipConfig'):
             n_id = nic['ipConfig']['id']
             if 'autoIpConfig' in nic['ipConfig']:
-                internal = nic['ipConfig']['autoIpConfig']['allocatedIp']
+                if nic['ipConfig']['autoIpConfig']:
+                    internal = nic['ipConfig']['autoIpConfig']['allocatedIp']
+                else:
+                    internal = 'Pending'
             elif 'staticIpConfig' in nic['ipConfig']:
                 internal = nic['ipConfig']['staticIpConfig']['ip']
             # Get FQDN
